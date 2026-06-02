@@ -1,17 +1,9 @@
 package com.orcamento.repository;
 
 import com.orcamento.model.Orcamento;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
-import java.util.Optional;
 
 public interface OrcamentoRepository extends JpaRepository<Orcamento, Long> {
-    @Override
-    @EntityGraph(attributePaths = {"cliente", "itens"})
-    List<Orcamento> findAll();
-
-    @Override
-    @EntityGraph(attributePaths = {"cliente", "itens"})
-    Optional<Orcamento> findById(Long id);
+    List<Orcamento> findByClienteEmpresaId(Long empresaId);
 }

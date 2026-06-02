@@ -15,13 +15,20 @@ public class RecebimentoService {
 
     private final RecebimentoRepository recebimentoRepository;
     private final OrcamentoRepository orcamentoRepository;
+    private final ContextoEmpresaService contexto;
 
     public List<Recebimento> listarTodos() {
-        return recebimentoRepository.findAll();
+        if (contexto.isSuperAdmin()) return recebimentoRepository.findAll();
+        Long empresaId = contexto.getEmpresaId();
+        if (empresaId == null) return List.of();
+        return recebimentoRepository.findByOrcamentoClienteEmpresaId(empresaId);
     }
 
     public List<Recebimento> listarPorStatus(String status) {
-        return recebimentoRepository.findByStatus(status);
+        if (contexto.isSuperAdmin()) return recebimentoRepository.findByStatus(status);
+        Long empresaId = contexto.getEmpresaId();
+        if (empresaId == null) return List.of();
+        return recebimentoRepository.findByStatusAndOrcamentoClienteEmpresaId(status, empresaId);
     }
 
     public Recebimento criar(RecebimentoDTO dto) {

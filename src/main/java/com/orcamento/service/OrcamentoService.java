@@ -16,9 +16,13 @@ public class OrcamentoService {
 
     private final OrcamentoRepository orcamentoRepository;
     private final ClienteRepository clienteRepository;
+    private final ContextoEmpresaService contexto;
 
     public List<Orcamento> listarTodos() {
-        return orcamentoRepository.findAll();
+        if (contexto.isSuperAdmin()) return orcamentoRepository.findAll();
+        Long empresaId = contexto.getEmpresaId();
+        if (empresaId == null) return List.of();
+        return orcamentoRepository.findByClienteEmpresaId(empresaId);
     }
 
     public Orcamento criar(OrcamentoDTO dto) {
