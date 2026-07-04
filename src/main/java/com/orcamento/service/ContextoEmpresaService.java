@@ -21,9 +21,7 @@ public class ContextoEmpresaService {
     public Long getEmpresaId() {
         if (isSuperAdmin()) return null;
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return usuarioRepository.findByEmail(email)
-                .map(u -> u.getEmpresa() != null ? u.getEmpresa().getId() : null)
-                .orElse(null);
+        return usuarioRepository.findEmpresaIdByEmail(email).orElse(null);
     }
 
     public Usuario getUsuarioAtual() {

@@ -47,14 +47,26 @@ public class UsuarioController {
         u.setNome(body.get("nome"));
         u.setEmail(email);
         u.setSenha(passwordEncoder.encode(body.get("senha")));
-        u.setRole(Usuario.Role.CLIENTE);
+        // Permite SUPER_ADMIN definir a role (ADMIN ou CLIENTE); padrão é CLIENTE
+        String roleStr = body.get("role");
+        if (roleStr != null && contexto.isSuperAdmin()) {
+            try { u.setRole(Usuario.Role.valueOf(roleStr)); }
+            catch (IllegalArgumentException ignored) { u.setRole(Usuario.Role.CLIENTE); }
+        } else {
+            u.setRole(Usuario.Role.CLIENTE);
+        }
         u.setAtivo(true);
 
         // Vincula à empresa do admin que criou (ou empresa informada pelo SUPER_ADMIN)
         String empresaIdStr = body.get("empresaId");
-        if (empresaIdStr != null) {
-            empresaRepository.findById(Long.parseLong(empresaIdStr))
-                .ifPresent(u::setEmpresa);
+        if (empresaIdStr != null && contexto.isSuperAdmin()) {
+            Long empresaId;
+            try {
+                empresaId = Long.parseLong(empresaIdStr);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body(Map.of("erro", "empresaId inválido"));
+            }
+            empresaRepository.findById(empresaId).ifPresent(u::setEmpresa);
         } else if (!contexto.isSuperAdmin()) {
             Long empresaId = contexto.getEmpresaId();
             if (empresaId != null) {

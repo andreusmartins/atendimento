@@ -27,9 +27,9 @@ public class Usuario {
 
     private boolean ativo = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empresa_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuarios", "clientes"})
     private Empresa empresa;
 
     public enum Role {

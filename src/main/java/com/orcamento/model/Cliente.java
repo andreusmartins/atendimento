@@ -16,8 +16,8 @@ public class Cliente {
     private String telefone;
     private String endereco;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empresa_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "usuarios", "clientes"})
     private Empresa empresa;
 }
